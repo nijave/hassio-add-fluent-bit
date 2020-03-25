@@ -1,6 +1,6 @@
 {
   "name": "fluent-bit",
-  "version": "8",
+  "version": "1.0",
   "slug": "fluent_bit",
   "description": "Fluent-Bit log shipping",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
@@ -9,7 +9,7 @@
   "docker_api": true,
   "privileged": ["SYS_ADMIN"],
   "options": {
-     "host": "logstash",
+     "host": "elk",
      "port": 8888
    },
   "schema": {
