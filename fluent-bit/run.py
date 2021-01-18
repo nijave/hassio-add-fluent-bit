@@ -58,7 +58,7 @@ container = client.containers.run(
     #remove=True,
     log_config=LogConfig(type=LogConfig.types.JOURNALD),
     mounts=[
-        Mount(source="/run/log/journal", target="/var/log/journal", type="bind", read_only=True),
+        Mount(source="/var/log/journal", target="/var/log/journal", type="bind", read_only=True),
         Mount(source=data_mount["Source"], target="/data", type="bind", read_only=False),
     ],
     restart_policy={"Name": "always"},
