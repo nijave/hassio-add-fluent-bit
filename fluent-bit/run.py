@@ -9,13 +9,14 @@ with open("/data/options.json", "r") as options_file:
     options = json.loads(options_file.read())
     print(f"Using options: {options}")
 
+#CONTAINER_IMAGE = "fluent/fluent-bit"
+CONTAINER_IMAGE = "fluent/fluent-bit:sid"  # usage sid-based image with newer libsystemd-dev
 FORWARDER_CONTAINER_NAME = "addon_fluent_bit_forwarder"
 FLUENT_BIT_COMMAND = [
     "/fluent-bit/bin/fluent-bit",
     "-i", "systemd",
     "-p", "db=/data/fluent-bit.db",
     "-p", "path=/var/log/journal",
-    "-p", "match=*",
     "-o", "http",
     "-p", f"host={options['host']}",
     "-p", f"port={options['port']}",
@@ -36,6 +37,7 @@ this_container = next(
     if c.attrs["Config"]["Hostname"] == hostname
 )
 
+# Find the data mount from the original add-on container
 data_mount = mount = next(
     m for m in this_container.attrs["Mounts"]
     if m.get("Destination", "") == "/data"
@@ -51,7 +53,7 @@ except docker.errors.NotFound:
     pass
 
 container = client.containers.run(
-    "fluent/fluent-bit",
+    CONTAINER_IMAGE,
     FLUENT_BIT_COMMAND,
     name=FORWARDER_CONTAINER_NAME,
     detach=True,
@@ -59,6 +61,7 @@ container = client.containers.run(
     log_config=LogConfig(type=LogConfig.types.JOURNALD),
     mounts=[
         Mount(source="/var/log/journal", target="/var/log/journal", type="bind", read_only=True),
+        Mount(source="/etc/machine-id", target="/etc/machine-id", type="bind", read_only=True),
         Mount(source=data_mount["Source"], target="/data", type="bind", read_only=False),
     ],
     restart_policy={"Name": "always"},
