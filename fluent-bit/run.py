@@ -9,8 +9,7 @@ with open("/data/options.json", "r") as options_file:
     options = json.loads(options_file.read())
     print(f"Using options: {options}")
 
-#CONTAINER_IMAGE = "fluent/fluent-bit"
-CONTAINER_IMAGE = "fluent/fluent-bit:sid"  # usage sid-based image with newer libsystemd-dev
+CONTAINER_IMAGE = "fluent/fluent-bit" # go back to latest; sid no longer exists
 FORWARDER_CONTAINER_NAME = "addon_fluent_bit_forwarder"
 FLUENT_BIT_COMMAND = [
     "/fluent-bit/bin/fluent-bit",
